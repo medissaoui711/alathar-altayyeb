@@ -1,0 +1,41 @@
+
+.svgContainer {
+  transition: filter 0.3s ease-in-out;
+}
+
+.glowEffect {
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.7));
+}
+
+.centralSymbol {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: drawStroke 3s ease-in-out infinite alternate;
+}
+
+.luminousCore {
+  animation: pulse 2s infinite;
+  transform-origin: center;
+}
+
+@keyframes drawStroke {
+  from {
+    stroke-dashoffset: 200;
+    opacity: 0.5;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.3);
+  }
+}
