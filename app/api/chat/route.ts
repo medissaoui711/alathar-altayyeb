@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
-import { evaluateResponse } from "@/utils/evaluationEngine";
+import { evaluateResponse } from "../../../utils/evaluationEngine";
 
 export async function POST(req: NextRequest) {
   try {
