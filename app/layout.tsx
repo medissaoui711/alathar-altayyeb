@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${cairo.variable} ${amiri.variable} h-full`}>
       <body 
-        className={`islamic-pattern bg-slate-50 dark:bg-[#030712] text-slate-900 dark:text-slate-100 h-full overflow-hidden font-sans antialiased`}
+        className={`islamic-pattern bg-slate-50 dark:bg-[#040814] text-slate-900 dark:text-slate-100 h-full overflow-hidden font-sans antialiased`}
         style={{ overscrollBehavior: 'none' }}
       >
         <FaqihProvider>

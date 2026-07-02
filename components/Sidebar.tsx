@@ -134,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle, darkMode, toggl
         onClick={onToggle}
       />
       
-      <aside className={`relative z-50 bg-white dark:bg-[#030712] transition-all duration-300 ease-in-out border-l border-emerald-100 dark:border-emerald-900/20 shadow-2xl overflow-visible flex flex-col flex-shrink-0 ${isExpanded ? 'w-[280px] absolute md:relative h-full' : 'w-[80px] relative h-full'}`}>
+      <aside className={`relative z-50 bg-white dark:bg-[#040814] transition-all duration-300 ease-in-out border-l border-emerald-100 dark:border-emerald-900/20 shadow-2xl overflow-visible flex flex-col flex-shrink-0 ${isExpanded ? 'w-[280px] absolute md:relative h-full' : 'w-[80px] relative h-full'}`}>
         
         {/* Sidebar Header */}
         <div className={`p-6 border-b border-emerald-50 dark:border-emerald-900/20 flex items-center ${isExpanded ? 'justify-between' : 'justify-center'}`}>
@@ -194,7 +194,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isExpanded, onToggle, darkMode, toggl
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#030712]/40">
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#040814]/40">
           <div ref={settingsRef} className="relative mb-2">
             {/* Recent Pop-up Menu */}
             {isSettingsMenuOpen && (

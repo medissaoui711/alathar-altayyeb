@@ -38,9 +38,7 @@ const FeatureCard: React.FC<{
     <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed flex-grow text-right mb-6">{description}</p>
     
     <div className="w-full flex items-center justify-between mt-auto">
-      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0">
-        بدء المحادثة <ChevronLeft size={14} />
-      </span>
+      <div />
       <Star size={14} className="text-slate-300 dark:text-slate-700/80 group-hover:text-amber-500 transition-colors" />
     </div>
   </button>
@@ -275,7 +273,7 @@ const FaqihChat: React.FC<FaqihChatProps> = ({ onOpenReference, onNavigate }) =>
   return (
     <div className="flex flex-col h-full max-w-6xl mx-auto bg-transparent overflow-hidden">
       
-      <div className="flex items-center gap-3 p-4 border-b border-emerald-100 dark:border-emerald-900/30 bg-white/80 dark:bg-[#030712]/80 sticky top-0 z-20 backdrop-blur-xl">
+      <div className="flex items-center gap-3 p-4 border-b border-emerald-100 dark:border-emerald-900/30 bg-white/80 dark:bg-[#040814]/80 sticky top-0 z-20 backdrop-blur-xl">
         <div className="flex items-center gap-2 flex-wrap">
           <select 
             value={selectedSchool}

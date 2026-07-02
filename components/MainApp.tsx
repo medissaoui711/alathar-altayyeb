@@ -104,7 +104,7 @@ const AppContent = () => {
       />
       
       <div className="flex flex-col flex-1 overflow-hidden transition-all duration-500">
-        <header className="bg-white/80 dark:bg-[#030712]/80 backdrop-blur-md border-b border-emerald-100 dark:border-emerald-900/20 shadow-[0_1px_10px_rgba(16,185,129,0.02)] h-16 flex items-center justify-between px-4 sticky top-0 z-20 flex-shrink-0">
+        <header className="bg-white/80 dark:bg-[#040814]/80 backdrop-blur-md border-b border-emerald-100 dark:border-emerald-900/20 shadow-[0_1px_10px_rgba(16,185,129,0.02)] h-16 flex items-center justify-between px-4 sticky top-0 z-20 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentPage(Page.Chat)}>
               <div className="relative transition-transform duration-300 group-hover:scale-105">
