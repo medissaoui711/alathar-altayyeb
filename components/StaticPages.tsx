@@ -73,7 +73,7 @@ export const ContactPage: React.FC<StaticPageProps> = ({ onNavigate }) => (
         <Mail className="text-emerald-600 mt-1" />
         <div>
           <h4 className="font-bold text-slate-900 dark:text-slate-100">البريد الإلكتروني</h4>
-          <p className="text-sm text-slate-500 mt-1">support@alathartayyeb.com</p>
+          <p className="text-sm text-slate-500 mt-1">tectoolshub@gmail.com</p>
         </div>
       </div>
 

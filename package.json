@@ -4,20 +4,27 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p 3000",
+    "lint": "next lint"
   },
   "dependencies": {
-    "react-dom": "^19.2.0",
-    "lucide-react": "^0.554.0",
-    "react": "^19.2.0",
     "@google/genai": "^1.30.0",
-    "react-markdown": "9",
+    "idb": "^8.0.3",
+    "lucide-react": "^0.554.0",
     "next": "^16.0.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "9"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^22.14.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "postcss": "^8.5.16",
+    "tailwindcss": "^4.3.2",
     "typescript": "~5.8.2"
   }
 }

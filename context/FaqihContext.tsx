@@ -1,3 +1,4 @@
+'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { AppSettings, FiqhSchool, Session, AnswerType, Message } from '../types';
@@ -16,11 +17,12 @@ interface FaqihContextType {
   // Session Manager Interface
   sessions: Session[];
   currentSession: Session | null;
-  startSession: (category: AnswerType, madhab: FiqhSchool) => Session;
+  startSession: (category: AnswerType, madhab: FiqhSchool) => Promise<Session>;
   loadSession: (sessionId: string) => void;
-  addMessage: (message: Message) => void;
-  deleteSession: (sessionId: string) => void;
-  endCurrentSession: () => void;
+  addMessage: (message: Message, explicitSessionId?: string) => Promise<void>;
+  deleteSession: (sessionId: string) => Promise<void>;
+  endCurrentSession: () => Promise<void>;
+  importSessionsData: (importedSessions: Session[]) => Promise<void>;
   
   // Legacy History helpers (mapped to session actions)
   activeChatId: string | null; // Mapped to currentSessionId
@@ -89,6 +91,7 @@ export const FaqihProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       addMessage: sessionManager.addMessage,
       deleteSession: sessionManager.deleteSession,
       endCurrentSession: sessionManager.endCurrentSession,
+      importSessionsData: sessionManager.importSessionsData,
       activeChatId: sessionManager.currentSessionId, // Alias for compatibility
       
       draftIntent,

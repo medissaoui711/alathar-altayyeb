@@ -92,7 +92,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => {
             </div>
             خزانة الأثر
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-md">
+          <p className="text-slate-500 dark:text-slate-300 max-w-md">
             استكشف أمهات المصادر والمراجع المعتمدة التي يستند إليها "الفقيه الافتراضي" في استنباط أحكامه.
           </p>
         </div>
@@ -131,7 +131,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => {
               <Bookmark size={28} />
             </div>
             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{book.title}</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 flex items-center gap-1.5">
+            <p className="text-sm text-slate-500 dark:text-slate-300 mb-4 flex items-center gap-1.5">
               <User size={14} className="text-emerald-500" />
               {book.author}
             </p>
@@ -151,7 +151,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => {
       {filteredBooks.length === 0 && (
         <div className="text-center py-32 bg-slate-50/50 dark:bg-slate-900/20 rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-800">
           <BookText size={64} className="mx-auto text-slate-200 dark:text-slate-800 mb-6" />
-          <p className="text-slate-500 dark:text-slate-400 font-bold">لم نجد أي كتب تطابق بحثك</p>
+          <p className="text-slate-500 dark:text-slate-300 font-bold">لم نجد أي كتب تطابق بحثك</p>
           <button onClick={() => {setSearchTerm(''); setSelectedCategory('All');}} className="mt-4 text-emerald-600 font-bold text-sm underline decoration-dotted underline-offset-4">إعادة الضبط</button>
         </div>
       )}
@@ -202,7 +202,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => {
                   <ScrollText size={18} className="text-emerald-500" />
                   أهمية الكتاب
                 </h4>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm bg-emerald-50/30 dark:bg-emerald-900/10 p-4 rounded-2xl">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm bg-emerald-50/30 dark:bg-emerald-900/10 p-4 rounded-2xl">
                   {selectedBook.importance}
                 </p>
               </div>
@@ -212,7 +212,7 @@ const LibraryPage: React.FC<LibraryPageProps> = ({ onNavigate }) => {
                   <Info size={18} className="text-emerald-500" />
                   نبذة عن الكتاب
                 </h4>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">
                   {selectedBook.description}
                 </p>
               </div>

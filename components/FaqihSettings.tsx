@@ -1,7 +1,8 @@
 
-import React from 'react';
-import { Settings, Moon, Sun, BookOpen, Zap, Brain, Check, Save } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Settings, Moon, Sun, BookOpen, Zap, Brain, Check, Save, Download, Upload } from 'lucide-react';
 import { AppSettings, FiqhSchool, AIModel } from '../types';
+import { useFaqih } from '../context/FaqihContext';
 
 interface FaqihSettingsProps {
   settings: AppSettings;
@@ -10,10 +11,52 @@ interface FaqihSettingsProps {
 }
 
 const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSettings, onNavigateBack }) => {
-  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { sessions, importSessionsData } = useFaqih();
+
   const update = (key: keyof AppSettings, value: any) => {
     const newSettings = { ...settings, [key]: value };
     onUpdateSettings(newSettings);
+    localStorage.setItem('faqih_settings', JSON.stringify(newSettings));
+  };
+
+  const handleExport = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sessions, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `faqih_sessions_backup_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchorNode); // required for firefox
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const result = e.target?.result;
+        if (typeof result === 'string') {
+          const parsed = JSON.parse(result);
+          if (Array.isArray(parsed)) {
+            await importSessionsData(parsed);
+            alert('تم استيراد الجلسات بنجاح!');
+          } else {
+            alert('ملف النسخة الاحتياطية غير صالح.');
+          }
+        }
+      } catch (err) {
+        console.error(err);
+        alert('حدث خطأ أثناء استيراد الملف.');
+      }
+    };
+    reader.readAsText(file);
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -32,7 +75,7 @@ const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSetting
           التفضيلات الشرعية
         </h3>
         
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 space-y-6 shadow-sm">
+        <div className="bg-white dark:bg-[#080d1a] rounded-xl border border-slate-200 dark:border-slate-800/40 p-5 space-y-6 shadow-sm">
           
           {/* Default Madhhab */}
           <div className="space-y-3">
@@ -45,7 +88,7 @@ const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSetting
                   className={`flex items-center justify-center gap-2 p-3 rounded-lg border text-sm transition-all ${
                     settings.defaultSchool === school
                       ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 font-bold'
-                      : 'border-slate-200 dark:border-slate-700 hover:border-emerald-200 dark:hover:border-emerald-800 text-slate-600 dark:text-slate-400'
+                      : 'border-slate-200 dark:border-slate-700 hover:border-emerald-200 dark:hover:border-emerald-800 text-slate-600 dark:text-slate-300'
                   }`}
                 >
                   {school}
@@ -94,7 +137,7 @@ const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSetting
           الذكاء الاصطناعي والنظام
         </h3>
         
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-5 space-y-6 shadow-sm">
+        <div className="bg-white dark:bg-[#080d1a] rounded-xl border border-slate-200 dark:border-slate-800/40 p-5 space-y-6 shadow-sm">
           
           {/* AI Model */}
           <div className="space-y-3">
@@ -113,7 +156,7 @@ const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSetting
                 </div>
                 <div>
                   <span className={`block font-bold text-sm ${settings.aiModel === 'gemini-3-flash-preview' ? 'text-emerald-900 dark:text-emerald-400' : 'text-slate-700 dark:text-slate-300'}`}>Gemini 3 Flash</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">سريع، خفيف، ومناسب للأسئلة المباشرة واليومية.</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-300">سريع، خفيف، ومناسب للأسئلة المباشرة واليومية.</span>
                 </div>
               </button>
 
@@ -130,7 +173,7 @@ const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSetting
                 </div>
                 <div>
                   <span className={`block font-bold text-sm ${settings.aiModel === 'gemini-3-pro-preview' ? 'text-purple-900 dark:text-purple-400' : 'text-slate-700 dark:text-slate-300'}`}>Gemini 3 Pro</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400">تحليل عميق، مناسب للمسائل المعقدة والاستنباط.</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-300">تحليل عميق، مناسب للمسائل المعقدة والاستنباط.</span>
                 </div>
               </button>
             </div>
@@ -155,6 +198,47 @@ const FaqihSettings: React.FC<FaqihSettingsProps> = ({ settings, onUpdateSetting
             >
               <span className={`absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transform transition-transform duration-200 ease-in-out ${settings.darkMode ? 'translate-x-6' : 'translate-x-0'}`} />
             </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Backup and Data */}
+      <section className="space-y-4">
+        <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+          <Save size={18} />
+          النسخ الاحتياطي والبيانات
+        </h3>
+        
+        <div className="bg-white dark:bg-[#080d1a] rounded-xl border border-slate-200 dark:border-slate-800/40 p-5 space-y-6 shadow-sm">
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            بياناتك محفوظة محلياً في متصفحك. يمكنك تصدير جلساتك للاحتفاظ بنسخة احتياطية، أو استيرادها لاحقاً.
+          </p>
+          
+          <div className="flex flex-wrap gap-4">
+            <button 
+              onClick={handleExport}
+              className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            >
+              <Download size={18} />
+              <span>تصدير جلساتي (JSON)</span>
+            </button>
+
+            <div>
+              <input 
+                type="file" 
+                accept=".json" 
+                className="hidden" 
+                ref={fileInputRef} 
+                onChange={handleImport}
+              />
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+              >
+                <Upload size={18} />
+                <span>استيراد جلسات</span>
+              </button>
+            </div>
           </div>
         </div>
       </section>

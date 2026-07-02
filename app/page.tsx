@@ -5,7 +5,7 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 
 // Dynamic import for the main App logic to reduce initial bundle size
-const App = dynamic(() => import('../App'), {
+const MainApp = dynamic(() => import('../components/MainApp'), {
   ssr: false, // Disable SSR for the main app logic as it relies on browser APIs
   loading: () => (
     <div className="flex flex-col items-center justify-center h-screen bg-slate-50 dark:bg-slate-950 text-emerald-600">
@@ -19,5 +19,5 @@ const App = dynamic(() => import('../App'), {
 });
 
 export default function Home() {
-  return <App />;
+  return <MainApp />;
 }

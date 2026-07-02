@@ -37,7 +37,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ onNavigate }) => {
             </div>
             سجل الجلسات
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">مراجعة استفساراتك السابقة ({sessions.length})</p>
+          <p className="text-slate-500 dark:text-slate-300 text-sm mt-1">مراجعة استفساراتك السابقة ({sessions.length})</p>
         </div>
         
         <div className="relative w-full sm:w-auto">
@@ -77,7 +77,7 @@ const HistoryPage: React.FC<HistoryPageProps> = ({ onNavigate }) => {
                     <h3 className="font-bold text-slate-800 dark:text-slate-100 truncate group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                       {preview}
                     </h3>
-                    <div className="flex items-center flex-wrap gap-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <div className="flex items-center flex-wrap gap-2 text-[10px] sm:text-xs text-slate-500 dark:text-slate-300 mt-1">
                       <span className="flex items-center gap-1"><Calendar size={12} /> {date}</span>
                       <span className="opacity-30">|</span>
                       <span className="font-bold text-emerald-600 dark:text-emerald-500">{session.category}</span>

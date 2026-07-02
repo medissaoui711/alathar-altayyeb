@@ -2,5 +2,6 @@
   "name": "Alathar-Altayyeb",
   "developer": "تطوير فريق الأثر الطيب",
   "description": "تطبيق مساعد فقهي افتراضي يقدم إجابات استرشادية مع المراجع بأسلوب إسلامي وتصميم عصري - تطوير فريق الأثر الطيب",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

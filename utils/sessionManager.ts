@@ -1,21 +1,46 @@
 
+import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { Session, Message, AnswerType, FiqhSchool } from '../types';
 
-const STORAGE_KEY = 'faqih_sessions';
+const DB_NAME = 'faqih_database';
+const STORE_NAME = 'sessions';
+const DB_VERSION = 1;
+
+interface FaqihDB extends DBSchema {
+  sessions: {
+    key: string;
+    value: Session;
+    indexes: { 'by-date': string };
+  };
+}
+
+let dbPromise: Promise<IDBPDatabase<FaqihDB>> | null = null;
+
+if (typeof window !== 'undefined') {
+  dbPromise = openDB<FaqihDB>(DB_NAME, DB_VERSION, {
+    upgrade(db) {
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'sessionId' });
+        store.createIndex('by-date', 'lastUpdated');
+      }
+    },
+  });
+}
 
 // Helper to generate unique IDs
 const generateId = (): string => Date.now().toString(36) + Math.random().toString(36).substr(2);
 
 /**
- * Retrieves all sessions from local storage.
+ * Retrieves all sessions from IndexedDB, sorted by lastUpdated descending.
  */
-export const getSessions = (): Session[] => {
-  if (typeof window === 'undefined') return [];
+export const getSessions = async (): Promise<Session[]> => {
+  if (!dbPromise) return [];
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : [];
+    const db = await dbPromise;
+    const sessions = await db.getAllFromIndex(STORE_NAME, 'by-date');
+    return sessions.reverse(); // Newest first
   } catch (error) {
-    console.error("Error loading sessions:", error);
+    console.error("Error loading sessions from IndexedDB:", error);
     return [];
   }
 };
@@ -36,91 +61,99 @@ export const newSession = (category: AnswerType, madhab: FiqhSchool): Session =>
 };
 
 /**
- * Saves a session (new or existing) to local storage.
- * Also simulates backend sync.
+ * Saves a completely new session or overwrites an existing one in IndexedDB.
  */
-const persistSessions = (sessions: Session[]) => {
-  if (typeof window === 'undefined') return;
+export const saveSession = async (session: Session): Promise<Session[]> => {
+  if (!dbPromise) return [];
   try {
-    // Local Storage
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-    
-    // Backend Stub (Placeholder for API call)
-    // fetch('/api/sessions/sync', { method: 'POST', body: JSON.stringify(sessions) });
+    const db = await dbPromise;
+    await db.put(STORE_NAME, session);
+    return await getSessions();
   } catch (error) {
-    console.error("Error saving sessions:", error);
+    console.error("Error saving session to IndexedDB:", error);
+    return await getSessions();
   }
 };
 
 /**
  * Adds a message to a specific session and updates timestamps.
  */
-export const addMessageToSession = (
+export const addMessageToSession = async (
   sessionId: string, 
   message: Message, 
   sensitivityUpdate?: 'Normal' | 'High' | 'Critical'
-): Session[] => {
-  const sessions = getSessions();
-  const index = sessions.findIndex(s => s.sessionId === sessionId);
-
-  if (index !== -1) {
-    const updatedSession = { ...sessions[index] };
-    updatedSession.messages = [...updatedSession.messages, message];
-    updatedSession.lastUpdated = new Date().toISOString();
+): Promise<Session[]> => {
+  if (!dbPromise) return [];
+  try {
+    const db = await dbPromise;
+    const session = await db.get(STORE_NAME, sessionId);
     
-    if (sensitivityUpdate) {
-      updatedSession.sensitivityLevel = sensitivityUpdate;
-    } else if (message.needsEscalation) {
-      updatedSession.sensitivityLevel = 'Critical';
+    if (session) {
+      session.messages.push(message);
+      session.lastUpdated = new Date().toISOString();
+      
+      if (sensitivityUpdate) {
+        session.sensitivityLevel = sensitivityUpdate;
+      } else if (message.needsEscalation) {
+        session.sensitivityLevel = 'Critical';
+      }
+      
+      await db.put(STORE_NAME, session);
     }
-
-    // Move updated session to the top
-    sessions.splice(index, 1);
-    sessions.unshift(updatedSession);
-    
-    persistSessions(sessions);
-    return sessions;
+    return await getSessions();
+  } catch (error) {
+    console.error("Error adding message to session:", error);
+    return await getSessions();
   }
-  return sessions;
-};
-
-/**
- * Saves a completely new session or overwrites an existing one in the list.
- */
-export const saveSession = (session: Session): Session[] => {
-  const sessions = getSessions();
-  const index = sessions.findIndex(s => s.sessionId === session.sessionId);
-  
-  if (index !== -1) {
-    sessions[index] = session;
-  } else {
-    sessions.unshift(session);
-  }
-  
-  persistSessions(sessions);
-  return sessions;
 };
 
 /**
  * Deletes a session by ID.
  */
-export const deleteSession = (sessionId: string): Session[] => {
-  const sessions = getSessions();
-  const filtered = sessions.filter(s => s.sessionId !== sessionId);
-  persistSessions(filtered);
-  return filtered;
+export const deleteSession = async (sessionId: string): Promise<Session[]> => {
+  if (!dbPromise) return [];
+  try {
+    const db = await dbPromise;
+    await db.delete(STORE_NAME, sessionId);
+    return await getSessions();
+  } catch (error) {
+    console.error("Error deleting session:", error);
+    return await getSessions();
+  }
 };
 
 /**
- * Ends a session (Logic can be expanded to lock session, archive it, etc.)
+ * Ends a session (Updates lastUpdated)
  */
-export const endSession = (sessionId: string) => {
-  // Currently just ensures it's saved. 
-  // In future: could set a 'status': 'closed' flag on the session object.
-  const sessions = getSessions();
-  const session = sessions.find(s => s.sessionId === sessionId);
-  if (session) {
-    session.lastUpdated = new Date().toISOString();
-    persistSessions(sessions);
+export const endSession = async (sessionId: string): Promise<void> => {
+  if (!dbPromise) return;
+  try {
+    const db = await dbPromise;
+    const session = await db.get(STORE_NAME, sessionId);
+    if (session) {
+      session.lastUpdated = new Date().toISOString();
+      await db.put(STORE_NAME, session);
+    }
+  } catch (error) {
+    console.error("Error ending session:", error);
+  }
+};
+
+/**
+ * Imports sessions from a JSON array and overwrites/adds to existing.
+ */
+export const importSessions = async (importedSessions: Session[]): Promise<Session[]> => {
+  if (!dbPromise) return [];
+  try {
+    const db = await dbPromise;
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    for (const session of importedSessions) {
+      await tx.store.put(session);
+    }
+    await tx.done;
+    return await getSessions();
+  } catch (error) {
+    console.error("Error importing sessions:", error);
+    return await getSessions();
   }
 };

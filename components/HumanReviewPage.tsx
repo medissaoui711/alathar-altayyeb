@@ -24,7 +24,7 @@ const HumanReviewPage: React.FC = () => {
           <FileCheck size={40} />
         </div>
         <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">تم إرسال سؤالك بنجاح</h2>
-        <p className="text-slate-600 dark:text-slate-400 max-w-md">
+        <p className="text-slate-600 dark:text-slate-300 max-w-md">
           سيتم مراجعة سؤالك من قبل اللجنة الشرعية والرد عليك في أقرب وقت ممكن. يمكنك متابعة حالة الطلب من صفحة الإشعارات.
         </p>
         <button 
@@ -47,7 +47,7 @@ const HumanReviewPage: React.FC = () => {
           <Users className="text-emerald-600" />
           مراجعة بشرية (اللجنة الشرعية)
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-2">
+        <p className="text-slate-500 dark:text-slate-300 text-sm mt-2">
           للحصول على فتوى رسمية أو تدقيق في مسألة معقدة، يمكنك رفع سؤالك للجنة المختصة.
         </p>
       </div>

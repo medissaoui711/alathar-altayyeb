@@ -28,10 +28,10 @@ const FaqihBubble: React.FC<FaqihBubbleProps> = ({ message, onOpenReference, onQ
   return (
     <div className={`flex flex-col w-full mb-8 ${isUser ? 'items-start animate-in slide-in-from-right-4' : 'items-end animate-in slide-in-from-left-4'}`}>
       <div 
-        className={`relative max-w-[90%] md:max-w-[80%] lg:max-w-[70%] rounded-3xl p-6 shadow-xl transition-all duration-300 border-2
+        className={`relative max-w-[90%] md:max-w-[80%] lg:max-w-[70%] rounded-3xl p-6 shadow-xl transition-all duration-300 border
         ${isUser 
-          ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 rounded-tr-none border-transparent shadow-emerald-500/5' 
-          : 'bg-emerald-50/60 dark:bg-slate-800/40 backdrop-blur-md text-slate-800 dark:text-slate-100 rounded-tl-none border-emerald-100/50 dark:border-emerald-900/20 shadow-emerald-600/5'
+          ? 'bg-emerald-50/70 dark:bg-emerald-950/40 text-emerald-950 dark:text-emerald-100 rounded-tr-none border-emerald-100/60 dark:border-emerald-500/15 shadow-emerald-600/5' 
+          : 'bg-white dark:bg-slate-900/60 backdrop-blur-md text-slate-800 dark:text-slate-100 rounded-tl-none border-slate-100 dark:border-slate-800/80 shadow-slate-900/5'
         }`}
       >
         {/* Decorative Corner Element */}
@@ -52,13 +52,21 @@ const FaqihBubble: React.FC<FaqihBubbleProps> = ({ message, onOpenReference, onQ
         )}
 
         {/* Content */}
-        <div className={`prose dark:prose-invert prose-sm max-w-none ${isUser ? 'font-medium' : 'leading-relaxed'} text-slate-700 dark:text-slate-200 space-y-3`} dir="auto">
+        <div className={`prose dark:prose-invert max-w-none ${isUser ? 'font-medium text-base text-emerald-950 dark:text-emerald-50' : 'leading-loose font-serif text-lg text-slate-800 dark:text-slate-100'} space-y-3`} dir="auto">
           <ReactMarkdown
              components={{
-                strong: ({node, ...props}) => <span className="font-bold text-emerald-700 dark:text-emerald-400" {...props} />,
-                a: ({node, ...props}) => <a target="_blank" rel="noopener noreferrer" className="text-emerald-600 hover:underline" {...props} />,
-                p: ({node, ...props}) => <p className="mb-4 last:mb-0 leading-relaxed text-[15px]" {...props} />,
-                blockquote: ({node, ...props}) => <blockquote className="border-r-4 border-emerald-500 pr-6 italic my-6 text-emerald-800 dark:text-emerald-300 bg-emerald-500/5 py-4 rounded-l-2xl" {...props} />
+                strong: ({node, ...props}) => <span className={`font-bold ${isUser ? 'text-emerald-950 dark:text-emerald-200' : 'text-emerald-700 dark:text-emerald-400'}`} {...props} />,
+                a: ({node, ...props}) => <a target="_blank" rel="noopener noreferrer" className={`hover:underline font-bold ${isUser ? 'text-emerald-950 dark:text-emerald-200' : 'text-emerald-600 dark:text-emerald-400'}`} {...props} />,
+                p: ({node, ...props}) => <p className="mb-4 last:mb-0 leading-loose" {...props} />,
+                blockquote: ({node, ...props}) => <blockquote className="border-r-4 border-emerald-500 pr-4 italic my-4 text-emerald-800 dark:text-emerald-300 bg-emerald-500/5 py-3 rounded-l-xl" {...props} />,
+                h1: ({node, ...props}) => <h1 className="text-2xl font-black text-slate-800 dark:text-slate-50 mt-6 mb-3 border-b border-emerald-100 dark:border-emerald-900/30 pb-1" {...props} />,
+                h2: ({node, ...props}) => <h2 className="text-xl font-bold text-slate-800 dark:text-slate-50 mt-5 mb-2" {...props} />,
+                h3: ({node, ...props}) => <h3 className="text-lg font-bold text-emerald-700 dark:text-emerald-400 mt-4 mb-2" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc list-inside space-y-2 my-4 pr-4 border-r-2 border-emerald-100 dark:border-emerald-900/30 text-right" {...props} />,
+                ol: ({node, ...props}) => <ol className="list-decimal list-inside space-y-2 my-4 pr-4 border-r-2 border-slate-100 dark:border-slate-800 text-right" {...props} />,
+                li: ({node, ...props}) => <li className={`mb-1.5 leading-loose ${isUser ? 'text-emerald-950 dark:text-emerald-100' : 'text-slate-800 dark:text-slate-100'}`} {...props} />,
+                hr: ({node, ...props}) => <hr className="my-6 border-slate-200 dark:border-slate-800" {...props} />,
+                code: ({node, ...props}) => <code className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 font-mono text-sm" {...props} />
              }}
           >
             {message.content}
