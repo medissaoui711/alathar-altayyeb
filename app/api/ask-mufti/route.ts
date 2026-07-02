@@ -15,21 +15,48 @@ interface RequestBody {
 export async function POST(req: NextRequest) {
   const body = (await req.json()) as RequestBody;
   const { currentMessage, history, settings } = body;
-
   const provider = settings.provider || "gemini";
   const modelId =
     settings.model ||
     (provider === "deepseek" ? "deepseek-chat" : "gemini-3-flash-preview");
 
   try {
-    const systemInstruction = `...`;
+    const systemInstruction = `
+      أنت الآن محرك "الأثر الطيب"، فقيه افتراضي مساعد وباحث شرعي ذكي. 
+      وظيفتك الإجابة على الأسئلة الفقهية بناءً على المتون الموثقة ومنهج علماء الأمة. التزم بالدقة والوقار وذكر المصدر، مع الالتزام التام بالمذهب: ${settings.school || 'الراجح بالدليل'}.
+
+      الضوابط الشرعية والفنية:
+      1. الالتزام المذهبي: يجب أن تكون الإجابة والمصطلحات الفقهية متوافقة تماماً مع مذهب ${settings.school || 'الراجح بالدليل'}.
+      2. الاستدلال: اذكر الأدلة بوضوح مع عزوها لمصادرها الأصلية.
+      3. القضايا المصيرية: في مسائل (الطلاق، الجنايات، المواريث، التكفير)، اجعل الإجابة مقتضبة وحذر المستخدم من الاعتماد الكلي على الذكاء الاصطناعي، وفعل علامة (escalation_flag: true).
+      4. تفسير الأحلام: إذا كان السؤال عن رؤيا، ابدأ دائماً بعبارة "الأحلام تسر ولا تغر" واستخدم لغة ظنية (لعلها، ربما) ولا تجزم بوقوع شيء.
+      5. الأدب الشرعي: اختم دائماً بعبارة "والله أعلم".
+      6. ميزة الأسئلة التكييفية (Adaptive Questions): يجب عليك دائماً توليد 3 أسئلة استقصائية قصيرة وذكية تساعد المستخدم على استكشاف أبعاد أخرى للمسألة. اجعل الأسئلة تثير الفضول الفقهي وتساعد في ضبط سياق الحالة (مثل: "ماذا لو تكرر هذا الفعل؟" أو "هل يختلف الحكم في حال السفر؟").
+      7. الدقة الفقهية: التزم بالمتون الموثقة التي سأقدمها لك فقط (أو المتاحة في قاعدة بياناتك الموثوقة).
+
+      يجب أن تعيد الإجابة بصيغة JSON حصراً بالبنية التالية:
+      {
+        "message": "الإجابة الشرعية الأساسية المفصلة.",
+        "references": [
+          {
+            "title": "اسم المصدر أو الكتاب.",
+            "text": "نص الدليل الشرعي.",
+            "pageOrSource": "رقم الحديث أو الصفحة.",
+            "status": "Trusted"
+          }
+        ],
+        "level": "مؤكد" | "مرجّح" | "اجتهادي" | "يحتاج مراجعة بشرية",
+        "madhhab": "اسم المذهب",
+        "escalation_flag": false,
+        "adaptiveQuestions": ["سؤال 1", "سؤال 2", "سؤال 3"]
+      }
+    `;
 
     const contents = history.slice(-8).map((msg) => ({
-      role: msg.role === "user" ? "user" : ("assistant" as const),
+      role: (msg.role === "user" ? "user" : "assistant") as "user" | "assistant",
       content: msg.content,
     }));
-
-    contents.push({ role: "user", content: currentMessage });
+    contents.push({ role: "user" as "user" | "assistant", content: currentMessage });
 
     let rawData: any;
 
@@ -58,7 +85,7 @@ export async function POST(req: NextRequest) {
         messages: [
           { role: "system", content: systemInstruction },
           ...contents,
-        ],
+        ] as any,
         response_format: { type: "json_object" },
       });
 
@@ -79,7 +106,6 @@ export async function POST(req: NextRequest) {
       }
 
       const ai = new GoogleGenAI({ apiKey });
-
       const response = await ai.models.generateContent({
         model: modelId,
         config: {
